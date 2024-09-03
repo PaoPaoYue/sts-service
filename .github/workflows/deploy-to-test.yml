@@ -90,7 +90,6 @@ jobs:
           --namespace test \
           --set image.repository=${{ env.repo }} \
           --set image.tag=${{ env.tag }} \
-          --set image.pullPolicy=Always \
           --set 'env.spring.profiles.active=test' \
           --version ${{ env.version }}
 
