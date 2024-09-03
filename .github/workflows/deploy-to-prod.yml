@@ -61,9 +61,9 @@ jobs:
       run: |
         PROJECT_DIR="${{ github.event.inputs.service }}"
         if [ -f "$PROJECT_DIR/build.gradle.kts" ]; then
-          VERSION=$(grep '^version\s*=' "$PROJECT_DIR/build.gradle.kts" | awk -F"=" '{print $2}' | tr -d '[:space:]"')
+          VERSION=$(grep '^version\s*=' "$PROJECT_DIR/build.gradle.kts" | awk -F'=' '{gsub(/["'\'']/, "", $2); print $2}' | tr -d '[:space:]')
         elif [ -f "$PROJECT_DIR/build.gradle" ]; then
-          VERSION=$(grep '^version\s*=' "$PROJECT_DIR/build.gradle" | awk -F"=" '{print $2}' | tr -d '[:space:]"')
+          VERSION=$(grep '^version\s*=' "$PROJECT_DIR/build.gradle" | awk -F'=' '{gsub(/["'\'']/, "", $2); print $2}' | tr -d '[:space:]')
         else
           echo "No build.gradle or build.gradle.kts found in $PROJECT_DIR!"
           exit 1
