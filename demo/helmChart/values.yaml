@@ -1,0 +1,24 @@
+replicaCount: 1
+
+image:
+  repository: py846260131/sts-service-demo
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+env:
+  - spring.profiles.active: "test"
+
+resources:
+    limits:
+        cpu: 100m
+        memory: 128Mi
+    requests:
+        cpu: 100m
+        memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: []

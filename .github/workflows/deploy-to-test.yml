@@ -1,0 +1,80 @@
+name: [Test] Deployment workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Name of the service to deploy'
+        required: true
+        type: choice
+        options:
+          - demo
+        default: demo
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: '8'
+
+    - name: Cache Gradle Packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: gradle-${{ runner.os }}
+
+    - name: Extract Version from build.gradle(.kts)
+      id: extract_version
+      run: |
+        PROJECT_DIR="${{ github.event.inputs.service }}"
+        if [ -f "$PROJECT_DIR/build.gradle.kts" ]; then
+          VERSION=$(grep '^version\s*=' "$PROJECT_DIR/build.gradle.kts" | awk -F"=" '{print $2}' | tr -d '[:space:]"')
+        elif [ -f "$PROJECT_DIR/build.gradle" ]; then
+          VERSION=$(grep '^version\s*=' "$PROJECT_DIR/build.gradle" | awk -F"=" '{print $2}' | tr -d '[:space:]"')
+        else
+          echo "No build.gradle or build.gradle.kts found in $PROJECT_DIR!"
+          exit 1
+        fi
+        echo "version=$VERSION" >> $GITHUB_ENV
+
+    - name: Build Docker Image
+      run: |
+        TIMESTAMP=$(date +%Y%m%d%H%M%S)
+        DOCKER_IMAGE="${{ secrets.DOCKER_USERNAME }}/sts-service-$PROJECT_DIR:${{ env.version }}-$TIMESTAMP"
+        docker build -t $DOCKER_IMAGE "$PROJECT_DIR"
+
+    - name: Authenticate to Docker Hub
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Push Docker Image to Docker Hub
+      run: |
+        docker push $DOCKER_IMAGE
+
+    - name: Set up Google Kubernetes Engine
+      uses: google-github-actions/get-gke-credentials@v1
+      with:
+        cluster_name: ${{ secrets.GKE_CLUSTER }}
+        location: ${{ secrets.GKE_ZONE }}
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Deploy to Test Namespace with Helm
+      run: |
+        helm upgrade --install ${{ github.event.inputs.service }} "$PROJECT_DIR/helmChart" \
+          --namespace test \
+          --set image.repository=${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} \
+          --set image.tag=${{ env.version }} \
+          --set image.pullPolicy=Always \
+          --set 'env.spring.profiles.active=test' \
+          --version ${{ env.version }}
