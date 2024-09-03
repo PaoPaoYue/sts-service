@@ -78,10 +78,11 @@ jobs:
         docker build -t $DOCKER_IMAGE -f "${{ github.event.inputs.service }}"/Dockerfile .
         echo "repo=$DOCKER_REPO" >> $GITHUB_ENV
         echo "tag=$DOCKER_TAG" >> $GITHUB_ENV
+        echo "image=$DOCKER_IMAGE" >> $GITHUB_ENV
 
     - name: Push Docker Image to Docker Hub
       run: |
-        docker push $DOCKER_IMAGE
+        docker push ${{ env.image }}
 
     - name: Deploy to Test Namespace with Helm
       run: |
