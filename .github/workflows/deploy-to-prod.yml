@@ -1,4 +1,4 @@
-name: [Production] Deployment workflow
+name: "[Production] Deployment workflow"
 
 on:
   workflow_dispatch:
