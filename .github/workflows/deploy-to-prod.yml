@@ -57,7 +57,6 @@ jobs:
         restore-keys: gradle-${{ runner.os }}
 
     - name: Extract Version from build.gradle(.kts)
-      id: extract_version
       run: |
         if [ -f "${{ github.event.inputs.service }}/build.gradle.kts" ]; then
           VERSION=$(grep '^version\s*=' "${{ github.event.inputs.service }}/build.gradle.kts" | awk -F'=' '{gsub(/["'\'']/, "", $2); print $2}' | tr -d '[:space:]')
