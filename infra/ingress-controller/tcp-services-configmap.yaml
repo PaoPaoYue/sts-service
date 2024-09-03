@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services-configmap
+  namespace: ingress-nginx
+data: {}
+#  8080: "default/example-go:8080"
