@@ -10,7 +10,7 @@ service:
   port: 8080
 
 env:
-  - spring.profiles.active: "test"
+  spring.profiles.active: "test"
 
 resources:
     limits:

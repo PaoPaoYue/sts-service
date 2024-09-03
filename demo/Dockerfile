@@ -1,23 +1,23 @@
 # Use a Gradle image with JDK 8 as the base image
-FROM gradle:8-jdk8 AS build
+FROM gradle:8 AS build
 
 # Set the working directory inside the container
-WORKDIR ../
+WORKDIR /app
 
 # Copy the project source files
-COPY / /app
+COPY . /app
 
 # Build the application
-RUN gradle gradle :demo:bootJar
+RUN gradle :demo:bootJar
 
 # Use a lighter base image for the final build
-FROM openjdk:8-jre-alpine
+FROM openjdk:21-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy the JAR file from the build stage
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build /app/demo/build/libs/*.jar app.jar
 
 # Expose the application port
 EXPOSE 8080
