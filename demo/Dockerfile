@@ -2,7 +2,7 @@
 FROM gradle:8-jdk8 AS build
 
 # Set the working directory inside the container
-WORKDIR ../
+WORKDIR /app
 
 # Copy the project source files
 COPY / /app
