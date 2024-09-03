@@ -22,7 +22,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            {{- toYaml .Values.env | nindent 12 }}
+          {{- range $key, $val := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $val }}
+          {{- end }}
           ports:
             - containerPort: 8080
           resources:
