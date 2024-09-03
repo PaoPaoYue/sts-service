@@ -25,6 +25,25 @@ jobs:
         distribution: 'adopt'
         java-version: '8'
 
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: Set up Google Kubernetes Engine
+      uses: google-github-actions/get-gke-credentials@v1
+      with:
+        cluster_name: ${{ secrets.GKE_CLUSTER }}
+        location: ${{ secrets.GKE_ZONE }}
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Set up Helm & Kubectl
+      uses: mamezou-tech/setup-helmfile@v2.0.0
+
+    - name: Authenticate to Docker Hub
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
@@ -51,15 +70,6 @@ jobs:
         fi
         echo "version=$VERSION" >> $GITHUB_ENV
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-
-    - name: Authenticate to Docker Hub
-      run: |
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
     - name: Build Docker Image
       run: |
         TIMESTAMP=$(date +%Y%m%d%H%M%S)
@@ -72,15 +82,7 @@ jobs:
       run: |
         docker push $DOCKER_IMAGE
 
-    - name: Set up Google Kubernetes Engine
-      uses: google-github-actions/get-gke-credentials@v1
-      with:
-        cluster_name: ${{ secrets.GKE_CLUSTER }}
-        location: ${{ secrets.GKE_ZONE }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-
     - name: Deploy to Test Namespace with Helm
-      uses: wahyd4/kubectl-helm-action@master
       run: |
         helm upgrade --install ${{ github.event.inputs.service }} "$PROJECT_DIR/helmChart" \
           --namespace test \
@@ -91,6 +93,5 @@ jobs:
           --version ${{ env.version }}
 
     - name: Wait for Rollout to Complete
-      uses: wahyd4/kubectl-helm-action@master
       run: |
         kubectl rollout status deployment/${{ github.event.inputs.service }} --namespace test
