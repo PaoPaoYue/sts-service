@@ -59,24 +59,26 @@ jobs:
     - name: Extract Version from build.gradle(.kts)
       id: extract_version
       run: |
-        PROJECT_DIR="${{ github.event.inputs.service }}"
-        if [ -f "$PROJECT_DIR/build.gradle.kts" ]; then
-          VERSION=$(grep '^version\s*=' "$PROJECT_DIR/build.gradle.kts" | awk -F'=' '{gsub(/["'\'']/, "", $2); print $2}' | tr -d '[:space:]')
-        elif [ -f "$PROJECT_DIR/build.gradle" ]; then
-          VERSION=$(grep '^version\s*=' "$PROJECT_DIR/build.gradle" | awk -F'=' '{gsub(/["'\'']/, "", $2); print $2}' | tr -d '[:space:]')
+        if [ -f "${{ github.event.inputs.service }}/build.gradle.kts" ]; then
+          VERSION=$(grep '^version\s*=' "${{ github.event.inputs.service }}/build.gradle.kts" | awk -F'=' '{gsub(/["'\'']/, "", $2); print $2}' | tr -d '[:space:]')
+        elif [ -f "${{ github.event.inputs.service }}/build.gradle" ]; then
+          VERSION=$(grep '^version\s*=' "${{ github.event.inputs.service }}/build.gradle" | awk -F'=' '{gsub(/["'\'']/, "", $2); print $2}' | tr -d '[:space:]')
         else
-          echo "No build.gradle or build.gradle.kts found in $PROJECT_DIR!"
+          echo "No build.gradle or build.gradle.kts found in ${{ github.event.inputs.service }}!"
           exit 1
         fi
         echo "version=$VERSION" >> $GITHUB_ENV
 
     - name: Build Docker Image
       run: |
+        PROJECT_DIR="${{ github.event.inputs.service }}"
         TIMESTAMP=$(date +%Y%m%d%H%M%S)
-        DOCKER_REPO="${{ secrets.DOCKER_USERNAME }}/sts-service-$PROJECT_DIR"
+        DOCKER_REPO="${{ secrets.DOCKER_USERNAME }}/sts-service-${{ github.event.inputs.service }}"
         DOCKER_TAG="${{ env.version }}-$TIMESTAMP"
         DOCKER_IMAGE="$DOCKER_REPO:$DOCKER_TAG"
-        docker build -t $DOCKER_IMAGE "$PROJECT_DIR"
+        docker build -t $DOCKER_IMAGE "${{ github.event.inputs.service }}"
+        echo "repo=$DOCKER_REPO" >> $GITHUB_ENV
+        echo "tag=$DOCKER_TAG" >> $GITHUB_ENV
 
     - name: Push Docker Image to Docker Hub
       run: |
@@ -84,10 +86,10 @@ jobs:
 
     - name: Deploy to Production Namespace with Helm
       run: |
-        helm upgrade --install ${{ github.event.inputs.service }} "$PROJECT_DIR/helmChart" \
+        helm upgrade --install ${{ github.event.inputs.service }} "${{ github.event.inputs.service }}/helmChart" \
           --namespace prod \
-          --set image.repository=$DOCKER_REPO \
-          --set image.tag=$DOCKER_TAG \
+          --set image.repository=${{ env.repo }} \
+          --set image.tag=${{ env.tag }} \
           --set image.pullPolicy=Always \
           --set 'env.spring.profiles.active=prod' \
           --version ${{ env.version }}
