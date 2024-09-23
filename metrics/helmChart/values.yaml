@@ -11,7 +11,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.0.1"
+  tag: "0.0.1-SNAPSHOT-20240923225641"
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -21,35 +21,35 @@ fullnameOverride: ""
 
 # This section defines the environment variables for the container.
 env:
-    - name: MESH_PROXY_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.hostIP
-    - name: MESH_PROXY_PORT
-      value: "10000"
-    - name: REDIS_HOST
-      value: "redis-master"
-    - name: REDIS_PORT
-      value: "6379"
-    - name: CLICKHOUSE_HOST
-      value: "clickhouse-sts-service"
-    - name: CLICKHOUSE_PORT
-      value: "8123"
-    - name: REDIS_PASSWD
-      valueFrom:
-        secretKeyRef:
-          name: redis-passwd-secret
-          key: redis-password
-    - name: CLICKHOUSE_PROD_PASSWD
-      valueFrom:
-        secretKeyRef:
-          name: clickhouse-passwd-secret
-          key: prod
-    - name: CLICKHOUSE_TEST_PASSWD
-      valueFrom:
-        secretKeyRef:
-          name: clickhouse-passwd-secret
-          key: test
+  - name: MESH_PROXY_IP
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
+  - name: MESH_PROXY_PORT
+    value: "10000"
+  - name: REDIS_HOST
+    value: "redis-master"
+  - name: REDIS_PORT
+    value: "6379"
+  - name: CLICKHOUSE_HOST
+    value: "clickhouse-sts-service"
+  - name: CLICKHOUSE_PORT
+    value: "8123"
+  - name: REDIS_PASSWD
+    valueFrom:
+      secretKeyRef:
+        name: redis-passwd-secret
+        key: redis-password
+  - name: CLICKHOUSE_PROD_PASSWD
+    valueFrom:
+      secretKeyRef:
+        name: clickhouse-passwd-secret
+        key: prod
+  - name: CLICKHOUSE_TEST_PASSWD
+    valueFrom:
+      secretKeyRef:
+        name: clickhouse-passwd-secret
+        key: test
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/ 
