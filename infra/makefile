@@ -26,6 +26,8 @@ demo:
 
 # remember to set the clickhouse password in clickhouse-passwd-secret before running this
 # > kubectl create secret generic clickhouse-passwd-secret --from-literal test=<PASSWORD> --from-literal prod=<PASSWORD> --from-literal admin=<PASSWORD> --from-literal readonly=<PASSWORD> --namespace default
+# > kubectl create secret generic clickhouse-passwd-secret --from-literal clickhouse-password=<PASSWORD> --from-literal clickhouse-username=<USERNAME> --from-literal clickhouse-database=<DATABASE> --namespace test
+# > kubectl create secret generic clickhouse-passwd-secret --from-literal clickhouse-password=<PASSWORD> --from-literal clickhouse-username=<USERNAME> --from-literal clickhouse-database=<DATABASE> --namespace prod
 clickhouse:
 	kubectl apply -f https://raw.githubusercontent.com/Altinity/clickhouse-operator/master/deploy/operator/clickhouse-operator-install-bundle.yaml
 	kubectl apply -f clickhouse/clickhouse-cluster.yaml
@@ -34,6 +36,8 @@ clickhouse:
 # > helm repo add bitnami https://charts.bitnami.com/bitnami
 # remember to set the redis password in redis-passwd-secret before running this
 # > kubectl create secret generic redis-passwd-secret --from-literal redis-password=<REDIS_PASSWORD> --namespace default
+# > kubectl create secret generic redis-passwd-secret --from-literal redis-password=<REDIS_PASSWORD> --namespace test
+# > kubectl create secret generic redis-passwd-secret --from-literal redis-password=<REDIS_PASSWORD> --namespace prod
 redis:
 	helm upgrade --wait --timeout=$(TIMEOUT) --version ${REDIS_VERSION} --create-namespace --namespace default --install --values redis/values.yaml  redis bitnami/redis
 
