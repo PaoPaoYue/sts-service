@@ -36,21 +36,26 @@ env:
     value: "clickhouse-sts-service"
   - name: CLICKHOUSE_PORT
     value: "8123"
-  - name: REDIS_PASSWD
+  - name: REDIS_PASSWORD
     valueFrom:
       secretKeyRef:
         name: redis-passwd-secret
         key: redis-password
-  - name: CLICKHOUSE_PROD_PASSWD
+  - name: CLICKHOUSE_DATABASE
     valueFrom:
       secretKeyRef:
         name: clickhouse-passwd-secret
-        key: prod
-  - name: CLICKHOUSE_TEST_PASSWD
+        key: clickhouse-database
+  - name: CLICKHOUSE_USERNAME
     valueFrom:
       secretKeyRef:
         name: clickhouse-passwd-secret
-        key: test
+        key: clickhouse-username
+  - name: CLICKHOUSE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: clickhouse-passwd-secret
+        key: clickhouse-password
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/ 

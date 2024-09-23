@@ -28,29 +28,6 @@ env:
         fieldPath: status.hostIP
   - name: MESH_PROXY_PORT
     value: "10000"
-  - name: REDIS_HOST
-    value: "redis-master"
-  - name: REDIS_PORT
-    value: "6379"
-  - name: CLICKHOUSE_HOST
-    value: "clickhouse-sts-service"
-  - name: CLICKHOUSE_PORT
-    value: "8123"
-  - name: REDIS_PASSWD
-    valueFrom:
-      secretKeyRef:
-        name: redis-passwd-secret
-        key: redis-password
-  - name: CLICKHOUSE_PROD_PASSWD
-    valueFrom:
-      secretKeyRef:
-        name: clickhouse-passwd-secret
-        key: prod
-  - name: CLICKHOUSE_TEST_PASSWD
-    valueFrom:
-      secretKeyRef:
-        name: clickhouse-passwd-secret
-        key: test
 
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/ 
