@@ -1,0 +1,9 @@
+architecture: standalone
+
+auth:
+  existingSecret: redis-passwd-secret
+
+commonConfiguration: |-
+  save ""
+  maxmemory 512mb
+  maxmemory-policy allkeys-lru

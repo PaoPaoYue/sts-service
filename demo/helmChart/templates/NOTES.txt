@@ -1,0 +1,7 @@
+YPP RPC DEMO is now running on your Kubernetes cluster, which can be access by the following ways:
+1. Through the service:
+    {{ include "demo.fullname" . }}:{{ .Values.service.port }}
+2. Through YPP RPC Mesh Proxy, which provides load balancing and fail-over:
+    NODE_IP:MESH_PROXY_PORT
+   NODE_IP is the IP address of the node where the application is running, which can be obtained by status.hostIP.
+   MESH_PROXY_PORT is the convention port number for YPP RPC Mesh Proxy, which is 10000 by default.

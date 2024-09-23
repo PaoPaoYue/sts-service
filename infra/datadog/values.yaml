@@ -1,0 +1,8 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  site: us5.datadoghq.com
+  logs:
+    enabled: true
+    containerCollectAll: true
+  ignoreAutoConfig:
+    - docker_daemon

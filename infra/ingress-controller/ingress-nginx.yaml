@@ -350,19 +350,31 @@ spec:
   - IPv4
   ipFamilyPolicy: SingleStack
   ports:
-  - appProtocol: http
-    name: http
-    port: 80
+#  - appProtocol: http
+#    name: http
+#    port: 80
+#    protocol: TCP
+#    targetPort: "http"
+#  - appProtocol: https
+#    name: https
+#    port: 443
+#    protocol: TCP
+#    targetPort: "https"
+  - name: proxied-mesh
+    port: 50010
+    targetPort: 50010
     protocol: TCP
-    targetPort: http
-  - appProtocol: https
-    name: https
-    port: 443
+  - name: proxied-clickhouse
+    port: 50011
+    targetPort: 50011
     protocol: TCP
-    targetPort: https
-  - name: proxied-tcp-9000
-    port: 8080
-    targetPort: 8080
+  - name: proxied-redis
+    port: 50012
+    targetPort: 50012
+    protocol: TCP
+  - name: proxied-clickhouse-client
+    port: 50021
+    targetPort: 50021
     protocol: TCP
   selector:
     app.kubernetes.io/component: controller
