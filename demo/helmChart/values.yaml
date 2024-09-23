@@ -20,6 +20,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 # This section defines the environment variables for the container.
+activeProfile: "default"
 env:
   - name: MESH_PROXY_IP
     valueFrom:

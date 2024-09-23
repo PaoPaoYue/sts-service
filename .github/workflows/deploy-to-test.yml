@@ -91,10 +91,8 @@ jobs:
           --namespace test \
           --set image.repository=${{ env.repo }} \
           --set image.tag=${{ env.tag }} \
-          --set 'env.spring\.profiles\.active=test' \
+          --set activeProfile=test \
           --version ${{ env.version }} \
-          --dry-run
-          --debug
 
     - name: Wait for Rollout to Complete
       run: |
