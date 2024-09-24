@@ -29,11 +29,11 @@ env:
   - name: MESH_PROXY_PORT
     value: "10000"
   - name: REDIS_HOST
-    value: "redis-master"
+    value: "redis-master.default.svc.cluster.local"
   - name: REDIS_PORT
     value: "6379"
   - name: CLICKHOUSE_HOST
-    value: "clickhouse-sts-service"
+    value: "clickhouse-sts-service.default.svc.cluster.local"
   - name: CLICKHOUSE_PORT
     value: "8123"
   - name: REDIS_PASSWORD
