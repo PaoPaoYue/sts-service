@@ -1,0 +1,63 @@
+apiVersion: "clickhouse.altinity.com/v1"
+kind: "ClickHouseInstallation"
+metadata:
+  name: "sts-service"
+spec:
+  defaults:
+    templates:
+      dataVolumeClaimTemplate: data-volume-template
+      logVolumeClaimTemplate: log-volume-template
+  configuration:
+    users:
+      # reference to namespace/name/field in the secret with plain password
+      test/k8s_secret_password: default/clickhouse-passwd-secret/test
+      test/networks/ip:
+        - 0.0.0.0/0
+      test/profile: test_profile
+      test/quota: test_quota
+      test/allow_databases/database:
+        - "test"
+      prod/k8s_secret_password: default/clickhouse-passwd-secret/prod
+      prod/networks/ip:
+        - 0.0.0.0/0
+      prod/profile: prod_profile
+      prod/quota: prod_quota
+      prod/allow_databases/database:
+        - "prod"
+      admin/k8s_secret_password: default/clickhouse-passwd-secret/admin
+      admin/networks/ip:
+        - 0.0.0.0/0
+      admin/profile: default
+      admin/quota: default
+      readonly/k8s_secret_password: default/clickhouse-passwd-secret/readonly
+      readonly/networks/ip:
+        - 0.0.0.0/0
+      readonly/profile: readonly
+      readonly/quota: default
+    profiles:
+      test_profile/max_memory_usage: 1000000000
+      prod_profile/max_memory_usage: 10000000000
+      readonly/readonly: 1
+    quotas:
+      test_quota/interval/duration: 3600
+    clusters:
+      - name: "cluster-01"
+        layout:
+          shardsCount: 1
+          replicasCount: 1
+  templates:
+    volumeClaimTemplates:
+      - name: data-volume-template
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+      - name: log-volume-template
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

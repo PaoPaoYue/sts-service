@@ -9,6 +9,6 @@ public class DemoService implements IDemoService {
 
     @Override
     public DemoProto.EchoResponse echo(DemoProto.EchoRequest request) {
-         return DemoProto.EchoResponse.newBuilder().build();
+         return DemoProto.EchoResponse.newBuilder().setText(request.getText()).build();
     }
 }

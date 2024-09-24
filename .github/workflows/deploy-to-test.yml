@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - demo
+          - metrics
         default: demo
 
 jobs:
@@ -90,8 +91,8 @@ jobs:
           --namespace test \
           --set image.repository=${{ env.repo }} \
           --set image.tag=${{ env.tag }} \
-          --set 'env.spring\.profiles\.active=test' \
-          --version ${{ env.version }}
+          --set activeProfile=test \
+          --version ${{ env.version }} \
 
     - name: Wait for Rollout to Complete
       run: |

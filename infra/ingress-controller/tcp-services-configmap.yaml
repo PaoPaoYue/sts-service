@@ -3,5 +3,8 @@ kind: ConfigMap
 metadata:
   name: tcp-services-configmap
   namespace: ingress-nginx
-data: {}
-#  8080: "default/example-go:8080"
+data: 
+  50010: "default/mesh-proxy:10000"
+  50011: "default/clickhouse-sts-service:8123"
+  50012: "default/redis-master:6379"
+  50021: "default/clickhouse-sts-service:9000"

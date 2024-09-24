@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-service
+  name: {{ include "demo.fullname" . }}
   labels:
-    app: {{ .Chart.Name }}
+    {{- include "demo.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: 8080
+      targetPort: {{ .Values.service.port }}
+      protocol: TCP
   selector:
-    app: {{ .Chart.Name }}
+    {{- include "demo.selectorLabels" . | nindent 4 }}

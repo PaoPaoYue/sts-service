@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package rpc;
+
+import "base.proto";
+
+option java_package = "com.github.paopaoyue.metrics.proto";
+option java_outer_classname = "MetricsProto";
+
+// ############################
+// should define your proto objects here:
+
+message CardIdentifier {
+  string classpath = 1;                     // The classpath of the card class
+  string card_id = 2;                       // Card ID defined in the mod
+
+  bool upgraded = 11;                       // Whether the card was upgraded
+}
+
+// ============================ MCreateCardPick ============================
+// MCreateCardPick records the card pick of a user
+
+message CardPick {
+  CardIdentifier card_identifier = 1;       // Card
+
+  string card_rarity = 11;                  // Rarity of the card
+  string card_type = 12;                    // Type of the card
+  uint32 card_cost = 13;                    // Base cost of the card
+
+  uint32 num_in_deck = 5;                   // Number of this card in the deck
+}
+
+message MCreateCardPickRequest {
+  repeated CardPick picked = 1;
+  repeated CardPick unpicked = 2;
+
+  uint32 level = 11;                        // Level of the dungeon
+  uint32 ascension = 12;                    // Game ascension level
+
+  string user_name = 21;                    // User who encountered this card
+  string character_name = 31;               // Character whom the user was playing
+
+  string region = 41;                       // Region of the user
+  uint64 timestamp = 61;                    // Time when the card was encountered
+}
+
+message MCreateCardPickResponse {
+  RespBase base = 255;                      // should always include this field in response object
+}
+
+// ============================ MGetCardPickStat ============================
+// MGetCardPickStat queries the pick statistics of multiple cards
+
+message CardPickStat {
+  CardIdentifier card_identifier = 1;            // Card
+
+  optional double pick_rate = 11;                 // Overall pick rate
+
+  optional double first_pick_rate_f1 = 21;        // First pick rate for floor 1
+  optional double first_pick_rate_f2 = 22;        // First pick rate for floor 2
+  optional double first_pick_rate_f3 = 23;        // First pick rate for floor 3 or above
+
+  optional double duplicate_pick_rate_f1 = 31;    // duplicate pick rate for floor 1
+  optional double duplicate_pick_rate_f2 = 32;    // duplicate pick rate for floor 2
+  optional double duplicate_pick_rate_f3 = 33;    // duplicate pick rate for floor 3 or above
+
+  repeated string favorite_users = 101;          // List of favorite users for this card
+
+  uint64 sample_size = 151;                      // Sample size
+  uint32 sample_players = 152;                   // Number of unique players
+
+  uint64 time_stamp = 201;                       // Time when the statistics were generated
+}
+
+message MGetCardPickStatRequest {
+  repeated CardIdentifier card_identifiers = 1;  // List of card identifiers
+  uint32 ascension_min = 11;                     // Minimum ascension level
+  uint32 ascension_max = 12;                     // Maximum ascension level
+  uint32 timestamp_start = 13;                   // Start timestamp for filtering
+  uint32 timestamp_end = 14;                     // End timestamp for filtering
+  repeated string regions = 21;                  // List of regions to filter
+}
+
+message MGetCardPickStatResponse {
+  repeated CardPickStat card_pick_stats = 1;   // List of card pick statistics
+
+  RespBase base = 255;                         // Should always include this field in response object
+}
+
+// ############################
+
+enum ServiceStatusCode {
+  SERVICE_OK = 0;
+
+// ############################
+// should define your own service status code at >= 100000:
+// SERVICE_ERROR = 100001;
+
+// ############################
+}
+
+service Metrics {
+// ############################
+// should define your rpc calls here:
+  rpc MCreateCardPick(MCreateCardPickRequest) returns (MCreateCardPickResponse);
+
+  rpc MGetCardPickStat(MGetCardPickStatRequest) returns (MGetCardPickStatResponse);
+
+// ############################
+}
