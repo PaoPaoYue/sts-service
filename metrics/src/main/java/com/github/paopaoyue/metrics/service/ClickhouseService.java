@@ -25,7 +25,9 @@ import java.util.function.Consumer;
 @ConditionalOnProperty(value = "sts-service.metrics.clickhouse-host")
 public class ClickhouseService {
 
-    public static final String CARD_PICK_TABLE_NAME = "card_pick";private static final Logger logger = LogManager.getLogger(ClickhouseService.class);
+    public static final String CARD_PICK_TABLE_NAME = "card_pick";
+
+    private static final Logger logger = LogManager.getLogger(ClickhouseService.class);
 
     private final Client client;
 

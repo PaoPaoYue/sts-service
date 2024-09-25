@@ -3,7 +3,7 @@ CREATE TABLE card_pick (
     card_id String,           -- card_id defined in the mod
     card_rarity String,       -- the rarity of the card (common, uncommon, rare, special, basic, curse)
     card_type String,         -- the type of the card (attack, skill, power, status, curse)
-    card_cost UInt32,         -- the cost of the card
+    card_cost Int32,          -- the cost of the card
     num_in_deck UInt32,       -- the number of this card in the deck before pick
     upgraded UInt8,           -- whether the card was upgraded
     picked UInt8,             -- whether the card was picked
