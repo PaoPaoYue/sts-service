@@ -3,6 +3,7 @@ package com.github.paopaoyue.metrics;
 import com.github.paopaoyue.metrics.api.IMetricsCaller;
 import com.github.paopaoyue.metrics.proto.MetricsProto;
 import io.github.paopaoyue.mesh.rpc.api.CallOption;
+import io.github.paopaoyue.mesh.rpc.proto.Protocol;
 import io.github.paopaoyue.mesh.rpc.util.RespBaseUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -106,7 +107,6 @@ class MetricsApplicationTests {
                                         .build()
                         )
                         .build(),
-
                 new CallOption().setTimeout(Duration.ofSeconds(3))
         );
         logger.info("response: {}", response);
