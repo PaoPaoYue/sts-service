@@ -66,6 +66,9 @@ public class ClickhouseService {
         try (Records records = client.queryRecords(sql).get(Configuration.getProp().getCardPickStatQueryTimeout(), TimeUnit.SECONDS);) {
             logger.debug("Data read successfully: {} ms", TimeUnit.NANOSECONDS.toMillis(records.getServerTime()));
             logger.debug("Total rows: {}", records.getResultRows());
+            if (records.getResultRows() == 0)   {
+                return;
+            }
             for (GenericRecord record : records) {
                 consumer.accept(record);
             }
