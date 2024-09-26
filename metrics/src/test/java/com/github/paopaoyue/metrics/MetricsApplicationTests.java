@@ -63,7 +63,7 @@ class MetricsApplicationTests {
                                 )
                                 .setCardType("power")
                                 .setCardRarity("rare")
-                                .setCardCost(1)
+                                .setCardCost(-1)
                                 .setNumInDeck(0)
                                 .build())
                         .setLevel(10)
