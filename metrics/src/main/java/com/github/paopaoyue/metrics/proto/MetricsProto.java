@@ -1031,7 +1031,7 @@ public final class MetricsProto {
      * Base cost of the card
      * </pre>
      *
-     * <code>uint32 card_cost = 13;</code>
+     * <code>int32 card_cost = 13;</code>
      * @return The cardCost.
      */
     int getCardCost();
@@ -1225,7 +1225,7 @@ public final class MetricsProto {
      * Base cost of the card
      * </pre>
      *
-     * <code>uint32 card_cost = 13;</code>
+     * <code>int32 card_cost = 13;</code>
      * @return The cardCost.
      */
     @java.lang.Override
@@ -1275,7 +1275,7 @@ public final class MetricsProto {
         com.google.protobuf.GeneratedMessage.writeString(output, 12, cardType_);
       }
       if (cardCost_ != 0) {
-        output.writeUInt32(13, cardCost_);
+        output.writeInt32(13, cardCost_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -1302,7 +1302,7 @@ public final class MetricsProto {
       }
       if (cardCost_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(13, cardCost_);
+          .computeInt32Size(13, cardCost_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -1636,7 +1636,7 @@ public final class MetricsProto {
                 break;
               } // case 98
               case 104: {
-                cardCost_ = input.readUInt32();
+                cardCost_ = input.readInt32();
                 bitField0_ |= 0x00000008;
                 break;
               } // case 104
@@ -2004,7 +2004,7 @@ public final class MetricsProto {
        * Base cost of the card
        * </pre>
        *
-       * <code>uint32 card_cost = 13;</code>
+       * <code>int32 card_cost = 13;</code>
        * @return The cardCost.
        */
       @java.lang.Override
@@ -2016,7 +2016,7 @@ public final class MetricsProto {
        * Base cost of the card
        * </pre>
        *
-       * <code>uint32 card_cost = 13;</code>
+       * <code>int32 card_cost = 13;</code>
        * @param value The cardCost to set.
        * @return This builder for chaining.
        */
@@ -2032,7 +2032,7 @@ public final class MetricsProto {
        * Base cost of the card
        * </pre>
        *
-       * <code>uint32 card_cost = 13;</code>
+       * <code>int32 card_cost = 13;</code>
        * @return This builder for chaining.
        */
       public Builder clearCardCost() {
@@ -9503,7 +9503,7 @@ public final class MetricsProto {
       "\007card_id\030\002 \001(\t\022\020\n\010upgraded\030\013 \001(\010\"\210\001\n\010Car" +
       "dPick\022,\n\017card_identifier\030\001 \001(\0132\023.rpc.Car" +
       "dIdentifier\022\023\n\013card_rarity\030\013 \001(\t\022\021\n\tcard" +
-      "_type\030\014 \001(\t\022\021\n\tcard_cost\030\r \001(\r\022\023\n\013num_in" +
+      "_type\030\014 \001(\t\022\021\n\tcard_cost\030\r \001(\005\022\023\n\013num_in" +
       "_deck\030\005 \001(\r\"\310\001\n\026MCreateCardPickRequest\022\035" +
       "\n\006picked\030\001 \003(\0132\r.rpc.CardPick\022\037\n\010unpicke" +
       "d\030\002 \003(\0132\r.rpc.CardPick\022\r\n\005level\030\013 \001(\r\022\021\n" +
