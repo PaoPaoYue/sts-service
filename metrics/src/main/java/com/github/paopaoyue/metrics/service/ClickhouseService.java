@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -79,7 +80,7 @@ public class ClickhouseService {
         }
     }
 
-    public synchronized <T> void insert(String table, T object) {
+    public <T> void insert(String table, T object) {
         var buffer = bufferMap.get(table);
         if (buffer == null) {
             logger.error("Table {} not found", table);
@@ -87,13 +88,18 @@ public class ClickhouseService {
         }
         buffer.add(object);
         if (buffer.size() >= Configuration.getProp().getInsertBatchSize()) {
-            flush(table);
+            flush(table, buffer);
             buffer.clear();
         }
     }
 
-    private void flush(String table) {
-        client.insert(table, bufferMap.get(table), new InsertSettings());
+    private void flush(String table, List<Object> buffer) {
+        try (var response = client.insert(table, buffer, new InsertSettings()).get(Configuration.getProp().getCardPickStatQueryTimeout(), TimeUnit.SECONDS)) {
+            logger.info("Flushed {} records to table {}", buffer.size(), table);
+        } catch (Exception e) {
+            logger.error("Failed to flush data", e);
+        }
+
     }
 
 }
