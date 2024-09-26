@@ -25,7 +25,7 @@ message CardPick {
 
   string card_rarity = 11;                  // Rarity of the card
   string card_type = 12;                    // Type of the card
-  uint32 card_cost = 13;                    // Base cost of the card
+  int32 card_cost = 13;                     // Base cost of the card
 
   uint32 num_in_deck = 5;                   // Number of this card in the deck
 }

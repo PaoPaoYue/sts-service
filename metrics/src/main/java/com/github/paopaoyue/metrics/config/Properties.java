@@ -14,7 +14,7 @@ public class Properties {
 
     private int insertBatchSize = 1;
     private int cardPickStatQueryTimeout = 3;  // 3 second
-    private int cardPickStatRedisExpire = 300; // 5 minutes
+    private int cardPickStatRedisExpire = 60;  // 1 minutes
 
     public String getClickhouseHost() {
         return clickhouseHost;
