@@ -174,6 +174,11 @@ public class MetricsService implements IMetricsService {
 
     @Override
     public MetricsProto.MCreateCardPickResponse mCreateCardPick(MetricsProto.MCreateCardPickRequest request) {
+        if (!validateCreateRequest(request)) {
+            return MetricsProto.MCreateCardPickResponse.newBuilder()
+                    .setBase(Base.RespBase.newBuilder().setCode(Base.StatusCode.INVALID_PARAM_ERROR_VALUE).setMessage("Invalid request"))
+                    .build();
+        }
         List<CardPick> picked = request.getPickedList().stream()
                 .map(cp -> cardPickFromProto(cp, request, true))
                 .toList();
@@ -195,6 +200,26 @@ public class MetricsService implements IMetricsService {
             clickhouseService.insert(ClickhouseService.CARD_PICK_TABLE_NAME, cp);
         }
         return MetricsProto.MCreateCardPickResponse.newBuilder().build();
+    }
+
+    private boolean validateCreateRequest(MetricsProto.MCreateCardPickRequest request) {
+        if (request.getLevel() < 0 || request.getAscension() < 0 || request.getTimestamp() < 0) {
+            logger.warn("Invalid create card pick request: {}", request);
+            return false;
+        }
+        if (request.getPickedList().isEmpty() && request.getUnpickedList().isEmpty()) {
+            logger.warn("Empty picked and unpicked list in create card pick request: {}", request);
+            return false;
+        }
+        if (request.getPickedList().stream().anyMatch(cp -> cp.getNumInDeck() < 0)) {
+            logger.warn("Negative num in deck in picked list in create card pick request: {}", request);
+            return false;
+        }
+        if (request.getUnpickedList().stream().anyMatch(cp -> cp.getNumInDeck() < 0)) {
+            logger.warn("Negative num in deck in unpicked list in create card pick request: {}", request);
+            return false;
+        }
+        return true;
     }
 
     private CardPick cardPickFromProto(MetricsProto.CardPick cp, MetricsProto.MCreateCardPickRequest request, boolean picked) {
