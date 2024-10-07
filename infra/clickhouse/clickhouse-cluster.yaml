@@ -8,6 +8,26 @@ spec:
       dataVolumeClaimTemplate: data-volume-template
       logVolumeClaimTemplate: log-volume-template
   configuration:
+    files:
+      config.d/log_rotation.xml: |-
+        <clickhouse>
+            <asynchronous_metric_log remove="1"/>
+            <backup_log remove="1"/>
+            <metric_log remove="1"/>
+            <part_log remove="1"/>
+            <session_log remove="1"/>
+            <text_log remove="1" />
+            <trace_log remove="1"/>
+            <opentelemetry_span_log remove="1"/>
+            <zookeeper_log remove="1"/>
+            <processors_profile_log remove="1"/>
+            <logger>
+                <level>warning</level>
+                <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+                <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+                <size>100M</size>
+            </logger>
+        </clickhouse>
     users:
       # reference to namespace/name/field in the secret with plain password
       test/k8s_secret_password: default/clickhouse-passwd-secret/test
