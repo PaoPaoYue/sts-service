@@ -203,7 +203,9 @@ public class MetricsService implements IMetricsService {
     }
 
     private boolean validateCreateRequest(MetricsProto.MCreateCardPickRequest request) {
-        if (request.getLevel() < 0 || request.getAscension() < 0 || request.getTimestamp() < 0) {
+        if (request.getLevel() < 0 ||
+                request.getAscension() < 0 || request.getAscension() > 30 ||
+                request.getTimestamp() < 0) {
             logger.warn("Invalid create card pick request: {}", request);
             return false;
         }

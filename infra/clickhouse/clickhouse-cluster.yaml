@@ -9,6 +9,10 @@ spec:
       logVolumeClaimTemplate: log-volume-template
   configuration:
     files:
+      config.d/global_settings.xml: |-
+        <clickhouse>
+            <mark_cache_size>524288000</mark_cache_size> 
+        </clickhouse>
       config.d/log_rotation.xml: |-
         <clickhouse>
             <asynchronous_metric_log remove="1"/>
