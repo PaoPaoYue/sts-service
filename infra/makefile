@@ -33,6 +33,15 @@ clickhouse:
 	kubectl apply -f clickhouse/clickhouse-cluster.yaml
 
 # remember to add helm repo
+# > helm repo add metabase-operator-charts https://unagex.github.io/metabase-operator
+# remember to add ssl certificate in metabase-tls before running this
+# > kubectl create secret tls metabase-tls --cert=cert.crt --key=key.key -n default
+metabase:
+	helm upgrade --wait --timeout=$(TIMEOUT) --namespace kube-system --install metabase-operator metabase-operator-charts/metabase-operator
+	kubectl apply -f metabase/metabase.yaml
+	kubectl apply -f metabase/ingress.yaml
+
+# remember to add helm repo
 # > helm repo add bitnami https://charts.bitnami.com/bitnami
 # remember to set the redis password in redis-passwd-secret before running this
 # > kubectl create secret generic redis-passwd-secret --from-literal redis-password=<REDIS_PASSWORD> --namespace default
@@ -41,4 +50,4 @@ clickhouse:
 redis:
 	helm upgrade --wait --timeout=$(TIMEOUT) --version ${REDIS_VERSION} --create-namespace --namespace default --install --values redis/values.yaml  redis bitnami/redis
 
-.PHONY: datadog ingress-controller mesh-proxy demo redis clickhouse
+.PHONY: datadog ingress-controller mesh-proxy demo redis clickhouse metabase
