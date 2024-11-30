@@ -11,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import com.clickhouse.client.api.Client;
 
@@ -18,12 +19,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 @Service
 @ConditionalOnProperty(value = "sts-service.metrics.clickhouse-host")
+@DependsOn("configuration")
 public class ClickhouseService {
 
     public static final String CARD_PICK_TABLE_NAME = "card_pick";

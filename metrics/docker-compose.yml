@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  sts-metrics:
+    image: ${DOCKER_IMAGE}
+    container_name: sts-metrics
+    restart: always
+    network_mode: host
+    environment:
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      CLICKHOUSE_HOST: localhost
+      CLICKHOUSE_PORT: 8123
+      CLICKHOUSE_DATABASE: prod
+      CLICKHOUSE_USERNAME: prod
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      SPRING_PROFILES_ACTIVE: docker

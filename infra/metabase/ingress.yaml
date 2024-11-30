@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: metabase-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "3m"
+    nginx.ingress.kubernetes.io/limit-connections: "8"
+    nginx.ingress.kubernetes.io/limit-rpm: "30"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - www.defectno4.space
+    secretName: metabase-tls
+  rules:
+  - host: www.defectno4.space
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: metabase-sts-service-http
+            port:
+              number: 3000
