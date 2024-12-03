@@ -41,11 +41,11 @@ start:
 		read -p "Please enter CLICKHOUSE_PASSWORD: " CLICKHOUSE_PASSWORD; \
 		export CLICKHOUSE_PASSWORD; \
 	fi
-	export DOCKER_IMAGE=$(DOCKER_IMAGE) && docker-compose up -d
+	DOCKER_IMAGE=$(DOCKER_IMAGE) REDIS_PASSWORD=$$REDIS_PASSWORD CLICKHOUSE_PASSWORD=$$CLICKHOUSE_PASSWORD docker-compose up -d
 
 stop:
 	@echo "Stopping container..."
-	docker-compose down
+	DOCKER_IMAGE=$(DOCKER_IMAGE) REDIS_PASSWORD="" CLICKHOUSE_PASSWORD="" docker-compose down
 
 .PHONY: clean
 clean:
