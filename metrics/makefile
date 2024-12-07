@@ -32,16 +32,13 @@ push:
 .PHONY: start
 start:
 	@echo "Starting services with docker-compose using image: $(DOCKER_IMAGE)"
-	# Prompt for environment variables if not set
 	@if [ -z "$$REDIS_PASSWORD" ]; then \
 		read -p "Please enter REDIS_PASSWORD: " REDIS_PASSWORD; \
-		export REDIS_PASSWORD; \
-	fi
-	@if [ -z "$$CLICKHOUSE_PASSWORD" ]; then \
+	fi; \
+	if [ -z "$$CLICKHOUSE_PASSWORD" ]; then \
 		read -p "Please enter CLICKHOUSE_PASSWORD: " CLICKHOUSE_PASSWORD; \
-		export CLICKHOUSE_PASSWORD; \
-	fi
-	DOCKER_IMAGE=$(DOCKER_IMAGE) REDIS_PASSWORD=$$REDIS_PASSWORD CLICKHOUSE_PASSWORD=$$CLICKHOUSE_PASSWORD docker-compose up -d
+	fi; \
+ 	DOCKER_IMAGE=$(DOCKER_IMAGE) REDIS_PASSWORD=$$REDIS_PASSWORD CLICKHOUSE_PASSWORD=$$CLICKHOUSE_PASSWORD docker-compose up -d
 
 stop:
 	@echo "Stopping container..."
