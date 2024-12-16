@@ -99,7 +99,7 @@ public class MetricsService implements IMetricsService {
         Iterator<String> uniqueIdIterator = uniqueIds.iterator();
         while (uniqueIdIterator.hasNext()) {
             String uniqueId = uniqueIdIterator.next();
-            byte[] value = redisService.get(getRedisKey(uniqueId));
+            byte[] value = redisService.get(getRedisKey(uniqueId, request));
             if (value != null) {
                 try {
                     builder.addCardPickStats(MetricsProto.CardPickStat.parseFrom(value));
@@ -118,12 +118,12 @@ public class MetricsService implements IMetricsService {
         if ((request.getAscensionMax() > 0 || request.getAscensionMin() > 0) && (request.getAscensionMax() > request.getAscensionMin())) {
             whereClauses += String.format(" AND ascension BETWEEN %d AND %d", request.getAscensionMin(), request.getAscensionMax());
         }
-        if (request.getTimestampStart() > 0 && request.getTimestampEnd() > 0 && request.getTimestampEnd() > request.getTimestampStart()) {
-            whereClauses += String.format(" AND toUnixTimestamp(timestamp) BETWEEN %d AND %d", request.getTimestampStart(), request.getTimestampEnd());
-        }
-        if (!request.getRegionsList().isEmpty()) {
-            whereClauses += String.format(" AND region IN ('%s')", stringListToSqlIn(request.getRegionsList()));
-        }
+//        if (request.getTimestampStart() > 0 && request.getTimestampEnd() > 0 && request.getTimestampEnd() > request.getTimestampStart()) {
+//            whereClauses += String.format(" AND toUnixTimestamp(timestamp) BETWEEN %d AND %d", request.getTimestampStart(), request.getTimestampEnd());
+//        }
+//        if (!request.getRegionsList().isEmpty()) {
+//            whereClauses += String.format(" AND region IN ('%s')", stringListToSqlIn(request.getRegionsList()));
+//        }
         long timestamp = Instant.now().getEpochSecond();
         var sql = String.format(CARD_PICK_STAT_SQL, stringListToSqlIn(uniqueIds), whereClauses);
         clickhouseService.query(sql, record -> {
@@ -152,7 +152,7 @@ public class MetricsService implements IMetricsService {
             var cardPickStat = cardPickStatbuilder.build();
             builder.addCardPickStats(cardPickStat);
             uniqueIds.remove(uniqueId);
-            redisService.set(getRedisKey(uniqueId), cardPickStat.toByteArray(),
+            redisService.set(getRedisKey(uniqueId, request), cardPickStat.toByteArray(),
                     Duration.ofSeconds(Configuration.getProp().getCardPickStatRedisExpire()));
         });
 
@@ -165,7 +165,7 @@ public class MetricsService implements IMetricsService {
                     .setTimeStamp(timestamp)
                     .build();
             builder.addCardPickStats(cardPickStat);
-            redisService.set(getRedisKey(uniqueId), cardPickStat.toByteArray(),
+            redisService.set(getRedisKey(uniqueId, request), cardPickStat.toByteArray(),
                     Duration.ofSeconds(Configuration.getProp().getCardPickStatRedisExpire()));
         }
 
@@ -203,7 +203,7 @@ public class MetricsService implements IMetricsService {
     }
 
     private boolean validateCreateRequest(MetricsProto.MCreateCardPickRequest request) {
-        if (request.getLevel() < 0 ||
+        if (request.getLevel() < 0 || request.getLevel() > 60 ||
                 request.getAscension() < 0 || request.getAscension() > 30 ||
                 request.getTimestamp() < 0) {
             logger.warn("Invalid create card pick request: {}", request);
@@ -243,8 +243,12 @@ public class MetricsService implements IMetricsService {
         return cardPick;
     }
 
-    private String getRedisKey(String uniqueId) {
-        return String.format("card_pick_stat:%s", uniqueId);
+    private String getRedisKey(String uniqueId, MetricsProto.MGetCardPickStatRequest request) {
+        String key = "card_pick_stat:" + uniqueId;
+        if (request.getAscensionMax() > 0 || request.getAscensionMin() > 0) {
+            return key + ":a" + request.getAscensionMin() + "-" + request.getAscensionMax();
+        }
+        return key;
     }
 
     private String stringListToSqlIn(List<String> list) {
