@@ -206,19 +206,20 @@ public class MetricsService implements IMetricsService {
         if (request.getLevel() < 0 || request.getLevel() > 60 ||
                 request.getAscension() < 0 || request.getAscension() > 30 ||
                 request.getTimestamp() < 0) {
-            logger.warn("Invalid create card pick request: {}", request);
+            logger.warn("Invalid create card pick request with level {}, ascension {}, timestamp {}",
+                    request.getLevel(), request.getAscension(), request.getTimestamp());
             return false;
         }
         if (request.getPickedList().isEmpty() && request.getUnpickedList().isEmpty()) {
-            logger.warn("Empty picked and unpicked list in create card pick request: {}", request);
+            logger.warn("Empty picked and unpicked list in create card pick request");
             return false;
         }
         if (request.getPickedList().stream().anyMatch(cp -> cp.getNumInDeck() < 0)) {
-            logger.warn("Negative num in deck in picked list in create card pick request: {}", request);
+            logger.warn("Negative num in deck in picked list in create card pick request");
             return false;
         }
         if (request.getUnpickedList().stream().anyMatch(cp -> cp.getNumInDeck() < 0)) {
-            logger.warn("Negative num in deck in unpicked list in create card pick request: {}", request);
+            logger.warn("Negative num in deck in unpicked list in create card pick request");
             return false;
         }
         return true;
