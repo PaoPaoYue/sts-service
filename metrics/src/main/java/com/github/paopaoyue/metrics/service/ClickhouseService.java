@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -50,7 +51,7 @@ public class ClickhouseService {
     }
 
     private void register() {
-        bufferMap.put(CARD_PICK_TABLE_NAME, new ArrayList<>());
+        bufferMap.put(CARD_PICK_TABLE_NAME, new CopyOnWriteArrayList<>());
         client.register(CardPick.class, client.getTableSchema(CARD_PICK_TABLE_NAME));
     }
 
