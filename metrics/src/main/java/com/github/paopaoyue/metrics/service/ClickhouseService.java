@@ -15,7 +15,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import com.clickhouse.client.api.Client;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +81,7 @@ public class ClickhouseService {
         }
     }
 
-    public <T> void insert(String table, T object) {
+    public synchronized <T> void insert(String table, T object) {
         var buffer = bufferMap.get(table);
         if (buffer == null) {
             logger.error("Table {} not found", table);
