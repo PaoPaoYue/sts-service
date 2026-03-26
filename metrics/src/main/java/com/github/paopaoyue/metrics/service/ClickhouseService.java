@@ -29,6 +29,8 @@ public class ClickhouseService {
 
     public static final String CARD_PICK_TABLE_NAME = "card_pick";
 
+    public static final String CARD_PICK_V2_TABLE_NAME = "card_pick_v2";
+
     private static final Logger logger = LogManager.getLogger(ClickhouseService.class);
 
     private final Client client;

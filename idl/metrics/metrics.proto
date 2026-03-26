@@ -42,6 +42,8 @@ message MCreateCardPickRequest {
 
   string region = 41;                       // Region of the user
   uint64 timestamp = 61;                    // Time when the card was encountered
+
+  uint32 version = 101;                     // api version
 }
 
 message MCreateCardPickResponse {
@@ -79,6 +81,8 @@ message MGetCardPickStatRequest {
   uint32 timestamp_start = 13;                   // Start timestamp for filtering
   uint32 timestamp_end = 14;                     // End timestamp for filtering
   repeated string regions = 21;                  // List of regions to filter
+
+  uint32 version = 101;                          // api version
 }
 
 message MGetCardPickStatResponse {

@@ -76,7 +76,7 @@ public class MetricsService implements IMetricsService {
                 duplicate_pick_f3_count / nullIf(duplicate_pick_f3_total, 0) AS duplicate_pick_rate_f3,
                         
                 sample_players                                          -- Number of unique players
-            FROM card_data;
+            FROM %s;
             """;
 
     public MetricsService(ClickhouseService clickhouseService, RedisService redisService) {
@@ -124,8 +124,12 @@ public class MetricsService implements IMetricsService {
 //        if (!request.getRegionsList().isEmpty()) {
 //            whereClauses += String.format(" AND region IN ('%s')", stringListToSqlIn(request.getRegionsList()));
 //        }
+        var tableName = ClickhouseService.CARD_PICK_TABLE_NAME;
+        if (request.getVersion() > 1) {
+            tableName += String.format("_%d", request.getVersion());
+        }
         long timestamp = Instant.now().getEpochSecond();
-        var sql = String.format(CARD_PICK_STAT_SQL, stringListToSqlIn(uniqueIds), whereClauses);
+        var sql = String.format(CARD_PICK_STAT_SQL, stringListToSqlIn(uniqueIds), whereClauses, getTableName(request.getVersion()));
         clickhouseService.query(sql, record -> {
             String uniqueId = record.getString("unique_id");
             var cardPickStatbuilder = MetricsProto.CardPickStat.newBuilder()
@@ -191,13 +195,14 @@ public class MetricsService implements IMetricsService {
                 unpicked.stream().map(CardPick::getUniqueId).toList()
         );
         String extraJson = JSON.toJSONString(extra);
+        var tableName = getTableName(request.getVersion());
         for (CardPick cp : picked) {
             cp.setExtra(extraJson);
-            clickhouseService.insert(ClickhouseService.CARD_PICK_TABLE_NAME, cp);
+            clickhouseService.insert(tableName, cp);
         }
         for (CardPick cp : unpicked) {
             cp.setExtra(extraJson);
-            clickhouseService.insert(ClickhouseService.CARD_PICK_TABLE_NAME, cp);
+            clickhouseService.insert(tableName, cp);
         }
         return MetricsProto.MCreateCardPickResponse.newBuilder().build();
     }
@@ -242,6 +247,10 @@ public class MetricsService implements IMetricsService {
         cardPick.setRegion(request.getRegion());
         cardPick.setTimestamp(LocalDateTime.ofInstant(Instant.ofEpochSecond(request.getTimestamp()), ZoneOffset.UTC));
         return cardPick;
+    }
+
+    private static String getTableName(int version) {
+        return version == 2 ? ClickhouseService.CARD_PICK_V2_TABLE_NAME : ClickhouseService.CARD_PICK_TABLE_NAME;
     }
 
     private String getRedisKey(String uniqueId, MetricsProto.MGetCardPickStatRequest request) {

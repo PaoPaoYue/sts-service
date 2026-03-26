@@ -2278,6 +2278,16 @@ public final class MetricsProto {
      * @return The timestamp.
      */
     long getTimestamp();
+
+    /**
+     * <pre>
+     * api version
+     * </pre>
+     *
+     * <code>uint32 version = 101;</code>
+     * @return The version.
+     */
+    int getVersion();
   }
   /**
    * Protobuf type {@code rpc.MCreateCardPickRequest}
@@ -2589,6 +2599,21 @@ public final class MetricsProto {
       return timestamp_;
     }
 
+    public static final int VERSION_FIELD_NUMBER = 101;
+    private int version_ = 0;
+    /**
+     * <pre>
+     * api version
+     * </pre>
+     *
+     * <code>uint32 version = 101;</code>
+     * @return The version.
+     */
+    @java.lang.Override
+    public int getVersion() {
+      return version_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2626,6 +2651,9 @@ public final class MetricsProto {
       }
       if (timestamp_ != 0L) {
         output.writeUInt64(61, timestamp_);
+      }
+      if (version_ != 0) {
+        output.writeUInt32(101, version_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2665,6 +2693,10 @@ public final class MetricsProto {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt64Size(61, timestamp_);
       }
+      if (version_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(101, version_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2696,6 +2728,8 @@ public final class MetricsProto {
           .equals(other.getRegion())) return false;
       if (getTimestamp()
           != other.getTimestamp()) return false;
+      if (getVersion()
+          != other.getVersion()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2728,6 +2762,8 @@ public final class MetricsProto {
       hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getTimestamp());
+      hash = (37 * hash) + VERSION_FIELD_NUMBER;
+      hash = (53 * hash) + getVersion();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2879,6 +2915,7 @@ public final class MetricsProto {
         characterName_ = "";
         region_ = "";
         timestamp_ = 0L;
+        version_ = 0;
         return this;
       }
 
@@ -2951,6 +2988,9 @@ public final class MetricsProto {
         }
         if (((from_bitField0_ & 0x00000080) != 0)) {
           result.timestamp_ = timestamp_;
+        }
+        if (((from_bitField0_ & 0x00000100) != 0)) {
+          result.version_ = version_;
         }
       }
 
@@ -3042,6 +3082,9 @@ public final class MetricsProto {
         if (other.getTimestamp() != 0L) {
           setTimestamp(other.getTimestamp());
         }
+        if (other.getVersion() != 0) {
+          setVersion(other.getVersion());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -3124,6 +3167,11 @@ public final class MetricsProto {
                 bitField0_ |= 0x00000080;
                 break;
               } // case 488
+              case 808: {
+                version_ = input.readUInt32();
+                bitField0_ |= 0x00000100;
+                break;
+              } // case 808
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4025,6 +4073,50 @@ public final class MetricsProto {
       public Builder clearTimestamp() {
         bitField0_ = (bitField0_ & ~0x00000080);
         timestamp_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private int version_ ;
+      /**
+       * <pre>
+       * api version
+       * </pre>
+       *
+       * <code>uint32 version = 101;</code>
+       * @return The version.
+       */
+      @java.lang.Override
+      public int getVersion() {
+        return version_;
+      }
+      /**
+       * <pre>
+       * api version
+       * </pre>
+       *
+       * <code>uint32 version = 101;</code>
+       * @param value The version to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersion(int value) {
+
+        version_ = value;
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * api version
+       * </pre>
+       *
+       * <code>uint32 version = 101;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersion() {
+        bitField0_ = (bitField0_ & ~0x00000100);
+        version_ = 0;
         onChanged();
         return this;
       }
@@ -6959,6 +7051,16 @@ public final class MetricsProto {
      */
     com.google.protobuf.ByteString
         getRegionsBytes(int index);
+
+    /**
+     * <pre>
+     * api version
+     * </pre>
+     *
+     * <code>uint32 version = 101;</code>
+     * @return The version.
+     */
+    int getVersion();
   }
   /**
    * Protobuf type {@code rpc.MGetCardPickStatRequest}
@@ -7174,6 +7276,21 @@ public final class MetricsProto {
       return regions_.getByteString(index);
     }
 
+    public static final int VERSION_FIELD_NUMBER = 101;
+    private int version_ = 0;
+    /**
+     * <pre>
+     * api version
+     * </pre>
+     *
+     * <code>uint32 version = 101;</code>
+     * @return The version.
+     */
+    @java.lang.Override
+    public int getVersion() {
+      return version_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -7205,6 +7322,9 @@ public final class MetricsProto {
       }
       for (int i = 0; i < regions_.size(); i++) {
         com.google.protobuf.GeneratedMessage.writeString(output, 21, regions_.getRaw(i));
+      }
+      if (version_ != 0) {
+        output.writeUInt32(101, version_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -7243,6 +7363,10 @@ public final class MetricsProto {
         size += dataSize;
         size += 2 * getRegionsList().size();
       }
+      if (version_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(101, version_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -7270,6 +7394,8 @@ public final class MetricsProto {
           != other.getTimestampEnd()) return false;
       if (!getRegionsList()
           .equals(other.getRegionsList())) return false;
+      if (getVersion()
+          != other.getVersion()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -7297,6 +7423,8 @@ public final class MetricsProto {
         hash = (37 * hash) + REGIONS_FIELD_NUMBER;
         hash = (53 * hash) + getRegionsList().hashCode();
       }
+      hash = (37 * hash) + VERSION_FIELD_NUMBER;
+      hash = (53 * hash) + getVersion();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -7441,6 +7569,7 @@ public final class MetricsProto {
         timestampEnd_ = 0;
         regions_ =
             com.google.protobuf.LazyStringArrayList.emptyList();
+        version_ = 0;
         return this;
       }
 
@@ -7503,6 +7632,9 @@ public final class MetricsProto {
           regions_.makeImmutable();
           result.regions_ = regions_;
         }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.version_ = version_;
+        }
       }
 
       @java.lang.Override
@@ -7564,6 +7696,9 @@ public final class MetricsProto {
             regions_.addAll(other.regions_);
           }
           onChanged();
+        }
+        if (other.getVersion() != 0) {
+          setVersion(other.getVersion());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -7630,6 +7765,11 @@ public final class MetricsProto {
                 regions_.add(s);
                 break;
               } // case 170
+              case 808: {
+                version_ = input.readUInt32();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 808
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -8278,6 +8418,50 @@ public final class MetricsProto {
         ensureRegionsIsMutable();
         regions_.add(value);
         bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+
+      private int version_ ;
+      /**
+       * <pre>
+       * api version
+       * </pre>
+       *
+       * <code>uint32 version = 101;</code>
+       * @return The version.
+       */
+      @java.lang.Override
+      public int getVersion() {
+        return version_;
+      }
+      /**
+       * <pre>
+       * api version
+       * </pre>
+       *
+       * <code>uint32 version = 101;</code>
+       * @param value The version to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersion(int value) {
+
+        version_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * api version
+       * </pre>
+       *
+       * <code>uint32 version = 101;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersion() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        version_ = 0;
         onChanged();
         return this;
       }
@@ -9504,41 +9688,42 @@ public final class MetricsProto {
       "dPick\022,\n\017card_identifier\030\001 \001(\0132\023.rpc.Car" +
       "dIdentifier\022\023\n\013card_rarity\030\013 \001(\t\022\021\n\tcard" +
       "_type\030\014 \001(\t\022\021\n\tcard_cost\030\r \001(\005\022\023\n\013num_in" +
-      "_deck\030\005 \001(\r\"\310\001\n\026MCreateCardPickRequest\022\035" +
+      "_deck\030\005 \001(\r\"\331\001\n\026MCreateCardPickRequest\022\035" +
       "\n\006picked\030\001 \003(\0132\r.rpc.CardPick\022\037\n\010unpicke" +
       "d\030\002 \003(\0132\r.rpc.CardPick\022\r\n\005level\030\013 \001(\r\022\021\n" +
       "\tascension\030\014 \001(\r\022\021\n\tuser_name\030\025 \001(\t\022\026\n\016c" +
       "haracter_name\030\037 \001(\t\022\016\n\006region\030) \001(\t\022\021\n\tt" +
-      "imestamp\030= \001(\004\"7\n\027MCreateCardPickRespons" +
-      "e\022\034\n\004base\030\377\001 \001(\0132\r.rpc.RespBase\"\246\004\n\014Card" +
-      "PickStat\022,\n\017card_identifier\030\001 \001(\0132\023.rpc." +
-      "CardIdentifier\022\026\n\tpick_rate\030\013 \001(\001H\000\210\001\001\022\037" +
-      "\n\022first_pick_rate_f1\030\025 \001(\001H\001\210\001\001\022\037\n\022first" +
-      "_pick_rate_f2\030\026 \001(\001H\002\210\001\001\022\037\n\022first_pick_r" +
-      "ate_f3\030\027 \001(\001H\003\210\001\001\022#\n\026duplicate_pick_rate" +
-      "_f1\030\037 \001(\001H\004\210\001\001\022#\n\026duplicate_pick_rate_f2" +
-      "\030  \001(\001H\005\210\001\001\022#\n\026duplicate_pick_rate_f3\030! " +
-      "\001(\001H\006\210\001\001\022\026\n\016favorite_users\030e \003(\t\022\024\n\013samp" +
-      "le_size\030\227\001 \001(\004\022\027\n\016sample_players\030\230\001 \001(\r\022" +
-      "\023\n\ntime_stamp\030\311\001 \001(\004B\014\n\n_pick_rateB\025\n\023_f" +
-      "irst_pick_rate_f1B\025\n\023_first_pick_rate_f2" +
-      "B\025\n\023_first_pick_rate_f3B\031\n\027_duplicate_pi" +
-      "ck_rate_f1B\031\n\027_duplicate_pick_rate_f2B\031\n" +
-      "\027_duplicate_pick_rate_f3\"\267\001\n\027MGetCardPic" +
-      "kStatRequest\022-\n\020card_identifiers\030\001 \003(\0132\023" +
-      ".rpc.CardIdentifier\022\025\n\rascension_min\030\013 \001" +
-      "(\r\022\025\n\rascension_max\030\014 \001(\r\022\027\n\017timestamp_s" +
-      "tart\030\r \001(\r\022\025\n\rtimestamp_end\030\016 \001(\r\022\017\n\007reg" +
-      "ions\030\025 \003(\t\"d\n\030MGetCardPickStatResponse\022*" +
-      "\n\017card_pick_stats\030\001 \003(\0132\021.rpc.CardPickSt" +
-      "at\022\034\n\004base\030\377\001 \001(\0132\r.rpc.RespBase*#\n\021Serv" +
-      "iceStatusCode\022\016\n\nSERVICE_OK\020\0002\250\001\n\007Metric" +
-      "s\022L\n\017MCreateCardPick\022\033.rpc.MCreateCardPi" +
-      "ckRequest\032\034.rpc.MCreateCardPickResponse\022" +
-      "O\n\020MGetCardPickStat\022\034.rpc.MGetCardPickSt" +
-      "atRequest\032\035.rpc.MGetCardPickStatResponse" +
-      "B2\n\"com.github.paopaoyue.metrics.protoB\014" +
-      "MetricsProtob\006proto3"
+      "imestamp\030= \001(\004\022\017\n\007version\030e \001(\r\"7\n\027MCrea" +
+      "teCardPickResponse\022\034\n\004base\030\377\001 \001(\0132\r.rpc." +
+      "RespBase\"\246\004\n\014CardPickStat\022,\n\017card_identi" +
+      "fier\030\001 \001(\0132\023.rpc.CardIdentifier\022\026\n\tpick_" +
+      "rate\030\013 \001(\001H\000\210\001\001\022\037\n\022first_pick_rate_f1\030\025 " +
+      "\001(\001H\001\210\001\001\022\037\n\022first_pick_rate_f2\030\026 \001(\001H\002\210\001" +
+      "\001\022\037\n\022first_pick_rate_f3\030\027 \001(\001H\003\210\001\001\022#\n\026du" +
+      "plicate_pick_rate_f1\030\037 \001(\001H\004\210\001\001\022#\n\026dupli" +
+      "cate_pick_rate_f2\030  \001(\001H\005\210\001\001\022#\n\026duplicat" +
+      "e_pick_rate_f3\030! \001(\001H\006\210\001\001\022\026\n\016favorite_us" +
+      "ers\030e \003(\t\022\024\n\013sample_size\030\227\001 \001(\004\022\027\n\016sampl" +
+      "e_players\030\230\001 \001(\r\022\023\n\ntime_stamp\030\311\001 \001(\004B\014\n" +
+      "\n_pick_rateB\025\n\023_first_pick_rate_f1B\025\n\023_f" +
+      "irst_pick_rate_f2B\025\n\023_first_pick_rate_f3" +
+      "B\031\n\027_duplicate_pick_rate_f1B\031\n\027_duplicat" +
+      "e_pick_rate_f2B\031\n\027_duplicate_pick_rate_f" +
+      "3\"\310\001\n\027MGetCardPickStatRequest\022-\n\020card_id" +
+      "entifiers\030\001 \003(\0132\023.rpc.CardIdentifier\022\025\n\r" +
+      "ascension_min\030\013 \001(\r\022\025\n\rascension_max\030\014 \001" +
+      "(\r\022\027\n\017timestamp_start\030\r \001(\r\022\025\n\rtimestamp" +
+      "_end\030\016 \001(\r\022\017\n\007regions\030\025 \003(\t\022\017\n\007version\030e" +
+      " \001(\r\"d\n\030MGetCardPickStatResponse\022*\n\017card" +
+      "_pick_stats\030\001 \003(\0132\021.rpc.CardPickStat\022\034\n\004" +
+      "base\030\377\001 \001(\0132\r.rpc.RespBase*#\n\021ServiceSta" +
+      "tusCode\022\016\n\nSERVICE_OK\020\0002\250\001\n\007Metrics\022L\n\017M" +
+      "CreateCardPick\022\033.rpc.MCreateCardPickRequ" +
+      "est\032\034.rpc.MCreateCardPickResponse\022O\n\020MGe" +
+      "tCardPickStat\022\034.rpc.MGetCardPickStatRequ" +
+      "est\032\035.rpc.MGetCardPickStatResponseB2\n\"co" +
+      "m.github.paopaoyue.metrics.protoB\014Metric" +
+      "sProtob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -9562,7 +9747,7 @@ public final class MetricsProto {
     internal_static_rpc_MCreateCardPickRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_rpc_MCreateCardPickRequest_descriptor,
-        new java.lang.String[] { "Picked", "Unpicked", "Level", "Ascension", "UserName", "CharacterName", "Region", "Timestamp", });
+        new java.lang.String[] { "Picked", "Unpicked", "Level", "Ascension", "UserName", "CharacterName", "Region", "Timestamp", "Version", });
     internal_static_rpc_MCreateCardPickResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_rpc_MCreateCardPickResponse_fieldAccessorTable = new
@@ -9580,7 +9765,7 @@ public final class MetricsProto {
     internal_static_rpc_MGetCardPickStatRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_rpc_MGetCardPickStatRequest_descriptor,
-        new java.lang.String[] { "CardIdentifiers", "AscensionMin", "AscensionMax", "TimestampStart", "TimestampEnd", "Regions", });
+        new java.lang.String[] { "CardIdentifiers", "AscensionMin", "AscensionMax", "TimestampStart", "TimestampEnd", "Regions", "Version", });
     internal_static_rpc_MGetCardPickStatResponse_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_rpc_MGetCardPickStatResponse_fieldAccessorTable = new
