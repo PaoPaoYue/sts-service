@@ -79,6 +79,61 @@ public class MetricsService implements IMetricsService {
             FROM %s;
             """;
 
+    private static final String CARD_PICK_V2_STAT_SQL = """
+            WITH card_data AS (
+                SELECT
+                    unique_id,
+                    COUNT(*) AS total_encounters,                           -- Total encounters (samples)
+                    SUM(picked) AS total_picks,                             -- Total times picked
+                    COUNT(DISTINCT user_name) AS sample_players,            -- Unique players
+
+                    -- First pick (num_in_deck = 0, picked = 1) count and total per level
+                    countIf(level < 17 AND num_in_deck = 0 AND picked = 1) AS first_pick_f1_count,
+                    countIf(level < 17 AND num_in_deck = 0) AS first_pick_f1_total,
+                        
+                    countIf(level >= 17 AND level < 33 AND num_in_deck = 0 AND picked = 1) AS first_pick_f2_count,
+                    countIf(level >= 17 AND level < 33 AND num_in_deck = 0) AS first_pick_f2_total,
+                        
+                    countIf(level >= 33 AND num_in_deck = 0 AND picked = 1) AS first_pick_f3_count,
+                    countIf(level >= 33 AND num_in_deck = 0) AS first_pick_f3_total,
+                        
+                    -- Duplicate pick (num_in_deck != 0) count and total per level
+                    countIf(level < 17 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f1_count,
+                    countIf(level < 17 AND num_in_deck != 0) AS duplicate_pick_f1_total,
+                        
+                    countIf(level >= 17 AND level < 33 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f2_count,
+                    countIf(level >= 17 AND level < 33 AND num_in_deck != 0) AS duplicate_pick_f2_total,
+                        
+                    countIf(level >= 33 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f3_count,
+                    countIf(level >= 33 AND num_in_deck != 0) AS duplicate_pick_f3_total
+                FROM card_pick
+                WHERE unique_id IN (%s)
+                %s
+                GROUP BY unique_id
+            )
+                        
+            SELECT
+                unique_id,
+                total_encounters,
+                total_picks,
+                        
+                -- Overall pick rate
+                total_picks / nullIf(total_encounters, 0) AS pick_rate,    -- Overall pick rate
+                        
+                -- First pick rates
+                first_pick_f1_count / nullIf(first_pick_f1_total, 0) AS first_pick_rate_f1,
+                first_pick_f2_count / nullIf(first_pick_f2_total, 0) AS first_pick_rate_f2,
+                first_pick_f3_count / nullIf(first_pick_f3_total, 0) AS first_pick_rate_f3,
+                        
+                -- Duplicate pick rates
+                duplicate_pick_f1_count / nullIf(duplicate_pick_f1_total, 0) AS duplicate_pick_rate_f1,
+                duplicate_pick_f2_count / nullIf(duplicate_pick_f2_total, 0) AS duplicate_pick_rate_f2,
+                duplicate_pick_f3_count / nullIf(duplicate_pick_f3_total, 0) AS duplicate_pick_rate_f3,
+                        
+                sample_players                                          -- Number of unique players
+            FROM %s;
+            """;
+
     public MetricsService(ClickhouseService clickhouseService, RedisService redisService) {
         this.clickhouseService = clickhouseService;
         this.redisService = redisService;
@@ -125,11 +180,13 @@ public class MetricsService implements IMetricsService {
 //            whereClauses += String.format(" AND region IN ('%s')", stringListToSqlIn(request.getRegionsList()));
 //        }
         var tableName = ClickhouseService.CARD_PICK_TABLE_NAME;
+        var sqlTemplate = CARD_PICK_STAT_SQL;
         if (request.getVersion() > 1) {
-            tableName += String.format("_%d", request.getVersion());
+            tableName = ClickhouseService.CARD_PICK_V2_TABLE_NAME;
+            sqlTemplate = CARD_PICK_V2_STAT_SQL;
         }
         long timestamp = Instant.now().getEpochSecond();
-        var sql = String.format(CARD_PICK_STAT_SQL, stringListToSqlIn(uniqueIds), whereClauses, getTableName(request.getVersion()));
+        var sql = String.format(sqlTemplate, stringListToSqlIn(uniqueIds), whereClauses, getTableName(request.getVersion()));
         clickhouseService.query(sql, record -> {
             String uniqueId = record.getString("unique_id");
             var cardPickStatbuilder = MetricsProto.CardPickStat.newBuilder()
@@ -208,6 +265,10 @@ public class MetricsService implements IMetricsService {
     }
 
     private boolean validateCreateRequest(MetricsProto.MCreateCardPickRequest request) {
+        if (request.getVersion() < 0 || request.getVersion() > 2) {
+            logger.warn("Invalid create card pick request with version {}", request.getVersion());
+            return false;
+        }
         if (request.getLevel() < 0 || request.getLevel() > 60 ||
                 request.getAscension() < 0 || request.getAscension() > 30 ||
                 request.getTimestamp() < 0) {
@@ -254,7 +315,11 @@ public class MetricsService implements IMetricsService {
     }
 
     private String getRedisKey(String uniqueId, MetricsProto.MGetCardPickStatRequest request) {
-        String key = "card_pick_stat:" + uniqueId;
+        String key = "card_pick_stat:";
+        if (request.getVersion() > 0) {
+            key += "v" + request.getVersion() + ":";
+        }
+        key += uniqueId;
         if (request.getAscensionMax() > 0 || request.getAscensionMin() > 0) {
             return key + ":a" + request.getAscensionMin() + "-" + request.getAscensionMax();
         }
