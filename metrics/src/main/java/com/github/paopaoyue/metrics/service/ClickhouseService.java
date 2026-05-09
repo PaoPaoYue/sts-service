@@ -54,6 +54,7 @@ public class ClickhouseService {
     private void register() {
         bufferMap.put(CARD_PICK_TABLE_NAME, new CopyOnWriteArrayList<>());
         client.register(CardPick.class, client.getTableSchema(CARD_PICK_TABLE_NAME));
+        client.register(CardPick.class, client.getTableSchema(CARD_PICK_V2_TABLE_NAME));
     }
 
     @PostConstruct

@@ -7,6 +7,7 @@ CREATE TABLE card_pick_v2 (
     num_in_deck UInt32,       -- the number of this card in the deck before pick
     upgraded UInt8,           -- whether the card was upgraded
     picked UInt8,             -- whether the card was picked
+    act UInt8,                -- the act of the dungeon
     level UInt8,              -- the level of the dungeon
     ascension UInt8,          -- the game ascension level
     user_name String,         -- the user who encountered this card

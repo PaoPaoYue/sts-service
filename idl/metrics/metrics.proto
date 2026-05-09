@@ -36,6 +36,7 @@ message MCreateCardPickRequest {
 
   uint32 level = 11;                        // Level of the dungeon
   uint32 ascension = 12;                    // Game ascension level
+  uint32 act = 13;                          // Act number
 
   string user_name = 21;                    // User who encountered this card
   string character_name = 31;               // Character whom the user was playing

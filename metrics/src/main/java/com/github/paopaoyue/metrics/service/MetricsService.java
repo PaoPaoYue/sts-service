@@ -88,24 +88,24 @@ public class MetricsService implements IMetricsService {
                     COUNT(DISTINCT user_name) AS sample_players,            -- Unique players
 
                     -- First pick (num_in_deck = 0, picked = 1) count and total per level
-                    countIf(level < 17 AND num_in_deck = 0 AND picked = 1) AS first_pick_f1_count,
-                    countIf(level < 17 AND num_in_deck = 0) AS first_pick_f1_total,
+                    countIf(act = 1 AND num_in_deck = 0 AND picked = 1) AS first_pick_f1_count,
+                    countIf(act = 1 AND num_in_deck = 0) AS first_pick_f1_total,
                         
-                    countIf(level >= 17 AND level < 33 AND num_in_deck = 0 AND picked = 1) AS first_pick_f2_count,
-                    countIf(level >= 17 AND level < 33 AND num_in_deck = 0) AS first_pick_f2_total,
+                    countIf(act = 2 AND num_in_deck = 0 AND picked = 1) AS first_pick_f2_count,
+                    countIf(act = 2 AND num_in_deck = 0) AS first_pick_f2_total,
                         
-                    countIf(level >= 33 AND num_in_deck = 0 AND picked = 1) AS first_pick_f3_count,
-                    countIf(level >= 33 AND num_in_deck = 0) AS first_pick_f3_total,
+                    countIf(act >= 3 AND num_in_deck = 0 AND picked = 1) AS first_pick_f3_count,
+                    countIf(act >= 3 AND num_in_deck = 0) AS first_pick_f3_total,
                         
                     -- Duplicate pick (num_in_deck != 0) count and total per level
-                    countIf(level < 17 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f1_count,
-                    countIf(level < 17 AND num_in_deck != 0) AS duplicate_pick_f1_total,
+                    countIf(act = 1 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f1_count,
+                    countIf(act = 1 AND num_in_deck != 0) AS duplicate_pick_f1_total,
                         
-                    countIf(level >= 17 AND level < 33 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f2_count,
-                    countIf(level >= 17 AND level < 33 AND num_in_deck != 0) AS duplicate_pick_f2_total,
+                    countIf(act = 2 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f2_count,
+                    countIf(act = 2 AND num_in_deck != 0) AS duplicate_pick_f2_total,
                         
-                    countIf(level >= 33 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f3_count,
-                    countIf(level >= 33 AND num_in_deck != 0) AS duplicate_pick_f3_total
+                    countIf(act >= 3 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f3_count,
+                    countIf(act >= 3 AND num_in_deck != 0) AS duplicate_pick_f3_total
                 FROM card_pick
                 WHERE unique_id IN (%s)
                 %s
@@ -179,12 +179,7 @@ public class MetricsService implements IMetricsService {
 //        if (!request.getRegionsList().isEmpty()) {
 //            whereClauses += String.format(" AND region IN ('%s')", stringListToSqlIn(request.getRegionsList()));
 //        }
-        var tableName = ClickhouseService.CARD_PICK_TABLE_NAME;
-        var sqlTemplate = CARD_PICK_STAT_SQL;
-        if (request.getVersion() > 1) {
-            tableName = ClickhouseService.CARD_PICK_V2_TABLE_NAME;
-            sqlTemplate = CARD_PICK_V2_STAT_SQL;
-        }
+        var sqlTemplate = request.getVersion() == 2 ? CARD_PICK_V2_STAT_SQL : CARD_PICK_STAT_SQL;
         long timestamp = Instant.now().getEpochSecond();
         var sql = String.format(sqlTemplate, stringListToSqlIn(uniqueIds), whereClauses, getTableName(request.getVersion()));
         clickhouseService.query(sql, record -> {
@@ -271,9 +266,10 @@ public class MetricsService implements IMetricsService {
         }
         if (request.getLevel() < 0 || request.getLevel() > 60 ||
                 request.getAscension() < 0 || request.getAscension() > 30 ||
+                request.getAct() < 0 || request.getAct() > 4 ||
                 request.getTimestamp() < 0) {
-            logger.warn("Invalid create card pick request with level {}, ascension {}, timestamp {}",
-                    request.getLevel(), request.getAscension(), request.getTimestamp());
+            logger.warn("Invalid create card pick request with level {}, ascension {}, act {}, timestamp {}",
+                    request.getLevel(), request.getAscension(), request.getAct(),  request.getTimestamp());
             return false;
         }
         if (request.getPickedList().isEmpty() && request.getUnpickedList().isEmpty()) {
@@ -301,6 +297,7 @@ public class MetricsService implements IMetricsService {
         cardPick.setNumInDeck(cp.getNumInDeck());
         cardPick.setUpgraded(cp.getCardIdentifier().getUpgraded());
         cardPick.setPicked(picked);
+        cardPick.setAct(request.getAct());
         cardPick.setLevel(request.getLevel());
         cardPick.setAscension(request.getAscension());
         cardPick.setUserName(request.getUserName());
