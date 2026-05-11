@@ -7,6 +7,7 @@ import com.clickhouse.client.api.query.Records;
 import com.github.paopaoyue.metrics.config.Configuration;
 import com.github.paopaoyue.metrics.config.Properties;
 import com.github.paopaoyue.metrics.data.CardPick;
+import com.github.paopaoyue.metrics.data.CardPickV2;
 import jakarta.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +19,7 @@ import com.clickhouse.client.api.Client;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -52,9 +53,10 @@ public class ClickhouseService {
     }
 
     private void register() {
-        bufferMap.put(CARD_PICK_TABLE_NAME, new CopyOnWriteArrayList<>());
+        bufferMap.put(CARD_PICK_TABLE_NAME, new ArrayList<>());
+        bufferMap.put(CARD_PICK_V2_TABLE_NAME, new ArrayList<>());
         client.register(CardPick.class, client.getTableSchema(CARD_PICK_TABLE_NAME));
-        client.register(CardPick.class, client.getTableSchema(CARD_PICK_V2_TABLE_NAME));
+        client.register(CardPickV2.class, client.getTableSchema(CARD_PICK_V2_TABLE_NAME));
     }
 
     @PostConstruct
@@ -98,7 +100,8 @@ public class ClickhouseService {
     }
 
     private void flush(String table, List<Object> buffer) {
-        try (var response = client.insert(table, buffer, new InsertSettings()).get(Configuration.getProp().getCardPickStatQueryTimeout(), TimeUnit.SECONDS)) {
+        try (var response = client.insert(table, buffer, new InsertSettings())
+                .get(Configuration.getProp().getCardPickStatQueryTimeout(), TimeUnit.SECONDS)) {
             logger.info("Flushed {} records to table {}", buffer.size(), table);
         } catch (Exception e) {
             logger.error("Failed to flush data", e);

@@ -74,7 +74,7 @@ class MetricsApplicationTests {
                         .setTimestamp((int) (System.currentTimeMillis() / 1000))
                         .build(),
 
-                new CallOption()
+                new CallOption().setTimeout(Duration.ofSeconds(3))
         );
         logger.info("response: {}", response);
         assertThat(RespBaseUtil.isOK(response.getBase())).isTrue();

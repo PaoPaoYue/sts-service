@@ -1,10 +1,10 @@
 package com.github.paopaoyue.metrics.service;
 
 import com.alibaba.fastjson.JSON;
-import com.clickhouse.client.api.query.GenericRecord;
 import com.github.paopaoyue.metrics.config.Configuration;
 import com.github.paopaoyue.metrics.data.CardPick;
 import com.github.paopaoyue.metrics.data.CardPickExtra;
+import com.github.paopaoyue.metrics.data.CardPickV2;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.github.paopaoyue.mesh.rpc.proto.Base;
 import io.github.paopaoyue.mesh.rpc.service.RpcService;
@@ -51,7 +51,7 @@ public class MetricsService implements IMetricsService {
                         
                     countIf(level >= 34 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f3_count,
                     countIf(level >= 34 AND num_in_deck != 0) AS duplicate_pick_f3_total
-                FROM card_pick
+                FROM %s
                 WHERE unique_id IN (%s)
                 %s
                 GROUP BY unique_id
@@ -76,7 +76,7 @@ public class MetricsService implements IMetricsService {
                 duplicate_pick_f3_count / nullIf(duplicate_pick_f3_total, 0) AS duplicate_pick_rate_f3,
                         
                 sample_players                                          -- Number of unique players
-            FROM %s;
+            FROM card_data;
             """;
 
     private static final String CARD_PICK_V2_STAT_SQL = """
@@ -106,7 +106,7 @@ public class MetricsService implements IMetricsService {
                         
                     countIf(act >= 3 AND num_in_deck != 0 AND picked = 1) AS duplicate_pick_f3_count,
                     countIf(act >= 3 AND num_in_deck != 0) AS duplicate_pick_f3_total
-                FROM card_pick
+                FROM %s
                 WHERE unique_id IN (%s)
                 %s
                 GROUP BY unique_id
@@ -131,7 +131,7 @@ public class MetricsService implements IMetricsService {
                 duplicate_pick_f3_count / nullIf(duplicate_pick_f3_total, 0) AS duplicate_pick_rate_f3,
                         
                 sample_players                                          -- Number of unique players
-            FROM %s;
+            FROM card_data;
             """;
 
     public MetricsService(ClickhouseService clickhouseService, RedisService redisService) {
@@ -181,7 +181,7 @@ public class MetricsService implements IMetricsService {
 //        }
         var sqlTemplate = request.getVersion() == 2 ? CARD_PICK_V2_STAT_SQL : CARD_PICK_STAT_SQL;
         long timestamp = Instant.now().getEpochSecond();
-        var sql = String.format(sqlTemplate, stringListToSqlIn(uniqueIds), whereClauses, getTableName(request.getVersion()));
+        var sql = String.format(sqlTemplate, getTableName(request.getVersion()), stringListToSqlIn(uniqueIds), whereClauses);
         clickhouseService.query(sql, record -> {
             String uniqueId = record.getString("unique_id");
             var cardPickStatbuilder = MetricsProto.CardPickStat.newBuilder()
@@ -288,7 +288,14 @@ public class MetricsService implements IMetricsService {
     }
 
     private CardPick cardPickFromProto(MetricsProto.CardPick cp, MetricsProto.MCreateCardPickRequest request, boolean picked) {
-        CardPick cardPick = new CardPick();
+        CardPick cardPick;
+        if (request.getVersion() == 2) {
+            var cardPickV2 = new CardPickV2();
+            cardPickV2.setAct(request.getAct());
+            cardPick = cardPickV2;
+        } else {
+            cardPick = new CardPick();
+        }
         cardPick.setUniqueId(CardPick.generateUniqueId(cp.getCardIdentifier()));
         cardPick.setCardId(cp.getCardIdentifier().getCardId());
         cardPick.setCardRarity(cp.getCardRarity());
@@ -297,7 +304,6 @@ public class MetricsService implements IMetricsService {
         cardPick.setNumInDeck(cp.getNumInDeck());
         cardPick.setUpgraded(cp.getCardIdentifier().getUpgraded());
         cardPick.setPicked(picked);
-        cardPick.setAct(request.getAct());
         cardPick.setLevel(request.getLevel());
         cardPick.setAscension(request.getAscension());
         cardPick.setUserName(request.getUserName());

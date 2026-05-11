@@ -17,7 +17,6 @@ public class CardPick {
     private int numInDeck;           // the number of this card in the deck before pick
     private boolean upgraded;        // whether the card was upgraded
     private boolean picked;          // whether the card was picked
-    private int act;                 // the act of the dungeon
     private int level;               // the level of the dungeon
     private int ascension;           // the game ascension level
     private String userName;         // the user who encountered this card
@@ -108,14 +107,6 @@ public class CardPick {
         this.picked = picked;
     }
 
-    public int getAct() {
-        return act;
-    }
-
-    public void setAct(int act) {
-        this.act = act;
-    }
-
     public int getLevel() {
         return level;
     }
@@ -183,7 +174,6 @@ public class CardPick {
                 ", numInDeck=" + numInDeck +
                 ", upgraded=" + upgraded +
                 ", picked=" + picked +
-                ", act=" + act +
                 ", level=" + level +
                 ", ascension=" + ascension +
                 ", userName='" + userName + '\'' +

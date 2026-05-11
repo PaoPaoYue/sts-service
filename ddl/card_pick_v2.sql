@@ -16,6 +16,6 @@ CREATE TABLE card_pick_v2 (
     timestamp DateTime,       -- the time when the card was encountered
     extra String              -- extra information about the card in JSON format
 ) ENGINE = MergeTree()
-PARTITION BY toYYYYQ(timestamp)  -- partition by year and quarter
+PARTITION BY toYYYYMM(timestamp)  -- partition by year and quarter
 PRIMARY KEY (unique_id)
 ORDER BY (unique_id, timestamp);
